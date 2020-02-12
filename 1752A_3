@@ -1,18 +1,76 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://webstds.ipc.org/175x/2.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" targetNamespace="http://webstds.ipc.org/175x/2.0">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="https://webstds.ipc.org/175x/1752B/1752B" xmlns:IPC-1752B="https://webstds.ipc.org/175x/1752B/1752B" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified" targetNamespace="https://webstds.ipc.org/175x/1752B/1752B">
   <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
   <xsd:element name="MainDeclaration" type="MainDeclaration"/>
+  <xsd:element type="Include" name="IPC-1752B"/>
   <xsd:complexType name="MainDeclaration">
     <xsd:sequence>
       <xsd:element name="BusinessInfo" type="BusinessInfo"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Include" type="Include"/>
-      <xsd:element maxOccurs="unbounded" name="Product" type="Product"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="1" ref="IPC-1752B:IPC-1752B"/>
       <xsd:element minOccurs="0" name="Signature" type="ds:SignatureType"/>
     </xsd:sequence>
     <xsd:attribute name="version">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">
           <xsd:enumeration value="2.0"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="Include">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" name="Sectional" type="Sectional"/>
+	  <xsd:element minOccurs="0" name="Response" type="Response"/>
+      <xsd:element minOccurs="0" name="Request" type="Request"/>
+      <xsd:element maxOccurs="unbounded" name="Product" type="Product"/>
+    </xsd:sequence>
+  </xsd:complexType>  
+  <xsd:complexType name="Sectional">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubSectional" type="SubSectional"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="IPC-1752B"/>
+          <xsd:enumeration value="IPC-1753A"/>
+          <xsd:enumeration value="IPC-1754"/>
+          <xsd:enumeration value="IPC-1755A"/>
+          <xsd:enumeration value="IPC-1756"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="SubSectional">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubSectional" type="SubSectional"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="A"/>
+          <xsd:enumeration value="B"/>
+          <xsd:enumeration value="C"/>
+          <xsd:enumeration value="D"/>
+          <xsd:enumeration value="E"/>
+          <xsd:enumeration value="F"/>
+          <xsd:enumeration value="G"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>  
+  <xsd:complexType name="BusinessInfo">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="Response" type="Response"/>
+      <xsd:element minOccurs="0" name="Request" type="Request"/>
+      <xsd:element minOccurs="0" name="Declaration" type="Declaration"/>
+      <xsd:element minOccurs="0" name="EBusinessInfo" type="EBusinessInfo"/>
+    </xsd:sequence>
+    <xsd:attribute name="mode" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="Distribute"/>
+          <xsd:enumeration value="Request/Reply"/>
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
@@ -27,8 +85,6 @@
     <xsd:attribute name="comment" type="xsd:string"/>
     <xsd:attribute name="respondByDate" type="xsd:date"/>
     <xsd:attribute name="internalSupplierID" type="xsd:string"/>
-    <xsd:attribute name="fieldLock" type="xsd:boolean"/>
-    <xsd:attribute name="supplierCheckbox" type="xsd:boolean" use="required"/>
   </xsd:complexType>
   <xsd:complexType name="Contact">
     <xsd:sequence>
@@ -44,18 +100,24 @@
     <xsd:sequence/>
     <xsd:attribute name="identity" type="xsd:string"/>
     <xsd:attribute name="authority" type="xsd:string"/>
-  </xsd:complexType>
+ </xsd:complexType>
   <xsd:complexType name="UniqueIDExtended">
     <xsd:complexContent>
       <xsd:extension base="UniqueID">
         <xsd:attribute name="revision"/>
-      </xsd:extension>
+		<xsd:attribute name="date" type="xsd:date"/>
+	  </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
   <xsd:complexType name="ProductID">
     <xsd:sequence>
       <xsd:element maxOccurs="1" minOccurs="1" name="Amount" type="Amount"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="InstanceID" type="UniqueID"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="ArticleCategoryList" type="ArticleCategoryList"/>
+	  <xsd:element minOccurs="0" maxOccurs="unbounded" name="SafeUseList" type="SafeUseList"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="OtherItem" type="UniqueID"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="OtherRequestorItem" type="UniqueID"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="Attachment" type="Attachment"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="InstanceID" type="UniqueID"/>
     </xsd:sequence>
     <xsd:attribute name="itemName" type="xsd:string"/>
     <xsd:attribute name="itemNumber" type="xsd:string" use="required"/>
@@ -65,7 +127,7 @@
     <xsd:attribute name="requesterItemName" type="xsd:string"/>
     <xsd:attribute name="requesterItemNumber" type="xsd:string"/>
   </xsd:complexType>
-  <xsd:complexType name="Product">
+ <xsd:complexType name="Product">
     <xsd:sequence>
       <xsd:element maxOccurs="unbounded" name="ProductID" type="ProductID"/>
       <xsd:element minOccurs="0" name="MaterialInfo" type="MaterialInfo"/>
@@ -88,14 +150,15 @@
     </xsd:attribute>
     <xsd:attribute name="comment" type="xsd:string"/>
     <xsd:attribute name="numberOfInstances" type="xsd:float"/>
+	<xsd:attribute name="isArticle" type="xsd:boolean" />
   </xsd:complexType>
   <xsd:complexType name="Substance">
     <xsd:sequence>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceID" type="UniqueID"/>
       <xsd:element minOccurs="0" name="Amount" type="Amount"/>
       <xsd:element minOccurs="0" name="Concentration" type="Concentration"/>
-      <xsd:element minOccurs="0" name="SubstanceExemption" type="Exemption"/>
-    </xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceExemption" type="ExemptionList"/>
+	</xsd:sequence>
     <xsd:attribute name="name" type="xsd:string" use="required"/>
     <xsd:attribute name="comment" type="xsd:string"/>
   </xsd:complexType>
@@ -146,38 +209,43 @@
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:attribute>
-    <xsd:attribute name="value" type="xsd:float" use="required"/>
+    <xsd:attribute name="value" type="xsd:double" use="required"/>
   </xsd:complexType>
   <xsd:complexType name="Concentration">
-    <xsd:attribute name="value" type="xsd:float"/>
+    <xsd:attribute name="value" type="xsd:double"/>
   </xsd:complexType>
   <xsd:complexType name="HomogeneousMaterial">
     <xsd:sequence>
-      <xsd:element name="Amount" type="Amount"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCategoryList" type="SubstanceCategoryList"/>
+      <xsd:element maxOccurs="unbounded" name="MaterialCategoryList" type="MaterialCategoryList"/>
+	  <xsd:element maxOccurs="unbounded" name="AdditionalMaterialCategoryList" type="AdditionalMaterialCategoryList"/>
+	  <xsd:element name="Amount" type="Amount"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Substance" type="Substance"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Attachment" type="Attachment"/>
     </xsd:sequence>
     <xsd:attribute name="name" type="xsd:string" use="required"/>
     <xsd:attribute name="comment" type="xsd:string"/>
     <xsd:attribute name="materialGroupName" type="xsd:string"/>
-  </xsd:complexType>
+	</xsd:complexType>
   <xsd:complexType name="SubstanceCategory">
     <xsd:sequence>
       <xsd:element minOccurs="0" name="Amount" type="Amount"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="Substance" type="Substance"/>
       <xsd:element minOccurs="0" name="Threshold" type="Threshold"/>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCatExemptionList" type="ExemptionList"/>
+      	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCatExemptionList" type="ExemptionList"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Concentration" type="Concentration"/>
-		<xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCategoryID" type="UniqueIDExtended"/>
- </xsd:sequence>
+      <xsd:element maxOccurs="unbounded" name="MaterialCategoryList" type="MaterialCategoryList"/>
+	<xsd:element maxOccurs="unbounded" name="AdditionalMaterialCategoryList" type="AdditionalMaterialCategoryList"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCategoryID" type="UniqueID"/>
+	  <xsd:element maxOccurs="unbounded" minOccurs="0" name="ApplicationID" type="UniqueID"/>
+    </xsd:sequence>
     <xsd:attribute name="name" type="xsd:string" use="required"/>
     <xsd:attribute name="reportableApplication" type="xsd:string"/>
     <xsd:attribute name="comment" type="xsd:string"/>
     <xsd:attribute name="descriptionOfUse" type="xsd:string"/>
   </xsd:complexType>
-  <xsd:complexType name="ExemptionList">
+  	
+   <xsd:complexType name="ExemptionList">
     <xsd:sequence>
-      <xsd:element name="ExemptionListID" type="UniqueID"/>
+      <xsd:element name="ExemptionListID" type="UniqueIDExtended"/>
       <xsd:element maxOccurs="unbounded" name="Exemption" type="Exemption"/>
     </xsd:sequence>
   </xsd:complexType>
@@ -197,40 +265,37 @@
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="ExemptionList" type="ExemptionList"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="Attachment" type="Attachment"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="QueryList" type="QueryList"/>
-      <xsd:element maxOccurs="1" minOccurs="0" name="MaterialClassList" type="MaterialClassList"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ApplicationList" type="ApplicationList"/>
+	  <xsd:element maxOccurs="1" minOccurs="0" name="MaterialCategoryList" type="MaterialCategoryList"/>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCategoryList" type="SubstanceCategoryList"/>
       <xsd:element maxOccurs="1" minOccurs="0" name="HomogeneousMaterialList" type="HomogeneousMaterialList"/>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="BusinessInfo">
-    <xsd:sequence>
-      <xsd:element minOccurs="0" name="Response" type="Response"/>
-      <xsd:element minOccurs="0" name="Request" type="Request"/>
-      <xsd:element minOccurs="0" name="Declaration" type="Declaration"/>
-      <xsd:element minOccurs="0" name="EBusinessInfo" type="EBusinessInfo"/>
-    </xsd:sequence>
-    <xsd:attribute name="mode" use="required">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="Distribute"/>
-          <xsd:enumeration value="Request/Reply"/>
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
-  </xsd:complexType>
   <xsd:complexType name="QueryList">
     <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="QueryList" type="UniqueIDExtended"/>
-	  <xsd:element maxOccurs="unbounded" name="Query" type="Query"/>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="QueryListID" type="UniqueIDExtended"/>
+      <xsd:element maxOccurs="unbounded" name="Query" type="Query"/>
     </xsd:sequence>
-	<xsd:attribute name="identity" type="xsd:string"/>
-  </xsd:complexType>
+    </xsd:complexType>
   <xsd:complexType name="Query">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="QueryID" type="UniqueID"/>
+    </xsd:sequence>
+    <xsd:attribute name="statement" type="xsd:string" use="required"/>
+    <xsd:attribute name="response" type="xsd:boolean"/>
+  </xsd:complexType>
+  <xsd:complexType name="ApplicationList">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="ApplicationListID" type="UniqueIDExtended"/>
+	  <xsd:element maxOccurs="unbounded" name="Application" type="Application"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Application">
   <xsd:sequence>
-  <xsd:element maxOccurs="unbounded" minOccurs="0" name="QueryID" type="UniqueIDExtended"/>
+  <xsd:element maxOccurs="unbounded" minOccurs="0" name="ApplicationID" type="UniqueID"/>
   </xsd:sequence>
-  <xsd:attribute name="statement" type="xsd:string" use="required"/>
-  <xsd:attribute name="response" type="xsd:boolean"/>
+  <xsd:attribute name="reportableApplication" type="xsd:string" use="required"/>
+  <xsd:attribute name="applicationApplies" type="xsd:boolean"/>
   </xsd:complexType>
   <xsd:complexType name="EBusinessInfo">
     <xsd:sequence>
@@ -552,18 +617,48 @@
     <xsd:attribute name="postalCode" type="xsd:string"/>
     <xsd:attribute name="type" type="xsd:string"/>
   </xsd:complexType>
-  <xsd:complexType name="MaterialClassList">
+  <xsd:complexType name="ArticleCategoryList">
     <xsd:sequence>
-      <xsd:element name="MaterialClassListID" type="UniqueID"/>
-      <xsd:element maxOccurs="unbounded" name="MaterialClass" type="MaterialClass"/>
+      <xsd:element name="ArticleCategoryListID" type="UniqueIDExtended"/>
+      <xsd:element maxOccurs="unbounded" name="ArticleCategory" type="ArticleCategory"/>
     </xsd:sequence>
   </xsd:complexType>
-  <xsd:complexType name="MaterialClass">
+  <xsd:complexType name="ArticleCategory">
+    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="identity" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="MaterialCategoryList">
+    <xsd:sequence>
+      <xsd:element name="MaterialCategoryListID" type="UniqueIDExtended"/>
+      <xsd:element maxOccurs="unbounded" name="MaterialCategory" type="MaterialCategory"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="MaterialCategory">
     <xsd:sequence>
       <xsd:element minOccurs="0" name="Amount" type="Amount"/>
     </xsd:sequence>
-    <xsd:attribute name="name" type="xsd:string" use="required"/>
-    <xsd:attribute name="ID" type="xsd:string" use="required"/>
+    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="identity" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="AdditionalMaterialCategoryList">
+    <xsd:sequence>
+      <xsd:element name="AdditionalMaterialCategoryListID" type="UniqueIDExtended"/>
+      <xsd:element maxOccurs="unbounded" name="AdditionalMaterialCategory" type="AdditionalMaterialCategory"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AdditionalMaterialCategory">
+    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="identity" type="xsd:string" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="SafeUseList">
+    <xsd:sequence>
+      <xsd:element name="SafeUseListID" type="UniqueIDExtended"/>
+      <xsd:element maxOccurs="unbounded" name="SafeUse" type="SafeUse"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SafeUse">
+    <xsd:attribute name="name" type="xsd:string" />
+    <xsd:attribute name="identity" type="xsd:string" use="required"/>
   </xsd:complexType>
   <xsd:complexType name="SubstanceCategoryList">
     <xsd:sequence>
@@ -574,45 +669,7 @@
   <xsd:complexType name="HomogeneousMaterialList">
     <xsd:sequence>
       <xsd:element maxOccurs="unbounded" minOccurs="0" name="HomogeneousMaterial" type="HomogeneousMaterial"/>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="SubstanceList">
-    <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubstanceCategory" type="SubstanceCategory"/>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="Include">
-    <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" name="Sectional" type="Sectional"/>
-    </xsd:sequence>
-  </xsd:complexType>
-  <xsd:complexType name="Sectional">
-    <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubSectional" type="SubSectional"/>
-    </xsd:sequence>
-    <xsd:attribute name="name" use="required">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="MaterialInfo"/>
-          <xsd:enumeration value="ManufacturingInfo"/>
-          <xsd:enumeration value="PackagingProductsDeclaration"/>
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
-  </xsd:complexType>
-  <xsd:complexType name="SubSectional">
-    <xsd:sequence>
-      <xsd:element maxOccurs="unbounded" minOccurs="0" name="SubSectional" type="SubSectional"/>
-    </xsd:sequence>
-    <xsd:attribute name="name" use="required">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="A"/>
-          <xsd:enumeration value="B"/>
-          <xsd:enumeration value="C"/>
-          <xsd:enumeration value="D"/>
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:attribute>
+	 </xsd:sequence>
+	<xsd:attribute name="isFSD" type="xsd:boolean"/>
   </xsd:complexType>
 </xsd:schema>
